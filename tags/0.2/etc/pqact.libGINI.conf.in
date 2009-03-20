@@ -1,0 +1,5 @@
+NIMAGE	^satz/.*/.*/(.*)/([0-9]{8}) ([0-9]{4})/(.*)/([0-9]*)km/
+	FILE	 data/nimage/\1.\2.\3.\4.\5km
+
+NIMAGE	^satz/.*/.*/(.*)/([0-9]{8}) ([0-9]{4})/(.*)/([0-9]*)km/
+	EXEC	-wait @bindir@/satz.sh data/nimage/\1.\2.\3.\4.\5km \1 \2 \3 \4 \5  
