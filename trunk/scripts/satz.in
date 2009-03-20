@@ -12,35 +12,103 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
 
+
+
+source /etc/profile
+
 srs="+proj=latlong +datum=WGS84"
 
+##### time #####
 
+if [[ "$2" = "CLD" ]] || [[ "$2" = "CTP" ]] || [[ "$2" = "LI" ]] || [[ "$2" = "SFC-T" ]]
+then
+	period=60
+	poffset=0
+else
+	if [[ "$2" = "PRXX" ]] || [[ "$2" = "PW" ]]
+	then
+	  poffset=15
+		period=30
+	else
+		period=15
+		poffset=0
+	fi
+fi
 
-startunixtime=$(( $(date -u -d "${3} ${4}" +%s) / 900 * 900 ))
-endunixtime=$(( $(date -u -d "${3} ${4} UTC + 15 min" +%s) / 900 * 900 ))
+speriod=$(($period * 60))
 
-starttime=$(date -u -d @$startunixtime "+%Y-%m-%dT%H:%M:%SZ")
-endtime=$(date -u -d @$endunixtime "+%Y-%m-%dT%H:%M:%SZ")
+unixtime=$(( $(date -u -d "${3} ${4}" +%s) / $speriod * $speriod + $poffset))
+time=$(date -u -d @$unixtime "+%Y-%m-%dT%H:%M:%S")
+newfdate=$(date -u -d @$unixtime "+%Y%m%d.%H%M")
+endunixtime=$(( $(date -u -d "${3} ${4}" +%s) / $speriod * $speriod + $speriod + $poffset))
+endtime=$(date -u -d @$endunixtime "+%Y-%m-%dT%H:%M:%S")
 
-newfdate=$(date -u -d @$startunixtime "+%Y%m%d.%H%M")
+##### dirs #####
+
+wwwdisk="@wwwdisk@/satmapserver/gisdata"
+kmldisk="@wwwdisk@/kml/satz"
+www="@www@"
+wwwkml="@www@/kml/satz"
+
+if [[ ! -d "$wwwdisk" ]]
+then
+	mkdir -p "$wwwdisk"
+fi
+
+if [[ ! -d "$kmldisk" ]]
+then
+	mkdir -p "$kmldisk"
+fi
+
+##### files #####
+
+prodlower=`echo "$2" | tr [A-Z] [a-z]`
 
 gini="$1"
 
+tmpkml="/tmp/${2}.kml"
+kml="$kmldisk/${2}.kml"
+
 tiff="/tmp/${2}.${3}.${4}.${5}.${6}km.tiff"
-warp="@wwwdisk@/satmapserver/gisdata/${2}.$newfdate.${5}.${6}km.warped.tiff"
-tindex="@wwwdisk@/satmapserver/gisdata/${2}"
+warp="$wwwdisk/${2}.$newfdate.${5}.${6}km.tiff"
+basewarp=$(basename "$warp")
 
-sqltindex="@wwwdisk@/satmapserver/gisdata/${2}.sqlite"
+tmp_tindex="/tmp/${2}"
+tindex=
+sqltindex="/tmp/${2}.sqlite"
 
-mapfile="@wwwdisk@/satmapserver/gisdata/${2}.map"
-tmpmapfile="/tmp/${2}.map"
+mapfile="$wwwdisk/${2}.map"
 
-if [[ ! -d "@wwwdisk@/satmapserver/gisdata" ]]
+##### decode #####
+
+threshold=0;
+
+if [[ "$2" = "IR" ]] || [[ "$2" = "SFC-T" ]] || [[ "$2" = "PW" ]]
 then
-	mkdir -p "@wwwdisk@/satmapserver/gisdata"
+	threshold-110
+fi
+if [[ "$2" = "VIS" ]] || [[ "$2" = "SOUND-VIS" ]] || [[ "$2" = "CTP" ]]
+then
+	threshold=80
+fi
+if [[ "$2" = "LI" ]]
+then
+	threshold=140
+fi
+if [[ "$2" = "CLD" ]]
+then
+	threshold=40
+fi
+if [[ "$2" = "40" ]]
+then
+	threshold=10
 fi
 
-GINI2gdal -t 95 -g "$gini" -o "$tiff"
+
+
+GINI2gdal -t $threshold -g "$gini" -o "$tiff"
+
+##### warp #####
 
 gdalwarp -dstnodata 0 -co TILED=YES -t_srs "$srs" "$tiff" "$warp"
 
@@ -49,75 +117,117 @@ then
 	rm "$tiff"
 fi
 
-gdaltindex "$tindex.shp" "$warp"
+##### tileindex #####
 
+cd "${wwwdisk}/"
 
-if [[ ! -f "$sqltindex" ]]
+gdaltindex "$tmp_tindex.shp" "$basewarp"
+
+ogr2ogr -f SQLite -dsco METADATA=yes/no "$sqltindex" "$tmp_tindex.shp"
+
+sqlite3 "$sqltindex" "ALTER TABLE '$prodlower' ADD 'time' DATE;"
+sqlite3 "$sqltindex" "UPDATE '$prodlower' SET 'time' = datetime('$time');"
+
+if [[ ! -f "$2.shp" ]]
 then
-	ogr2ogr -f SQLite "$sqltindex" "$tindex.shp"
+        ogr2ogr "$2.shp" "$sqltindex"
 else
-	ogr2ogr -update -f SQLite "$sqltindex" "$tindex"
+        ogr2ogr -update -append "$2.shp" "$sqltindex"
 fi
 
-if [[ -f "$tindex.shp" ]]
+if [[ -f "$sqltindex" ]]
 then
-	rm "$tindex.shp"
-	rm "$tindex.dbf"
-	rm "$tindex.shx"
+        rm "$sqltindex"
 fi
 
+if [[ -f "$tmp_tindex.shp" ]]
+then
+        rm "$tmp_tindex.shp"
+        rm "$tmp_tindex.dbf"
+        rm "$tmp_tindex.shx"
+fi
 
-#	if [[ -f "$tmpmapfile" ]]
-#	then
-#		rm "$tmpmapfile"
-#	fi
-	
-#	echo "#layer 1" >> "$tmpmapfile"
-#	echo "  LAYER" >> "$tmpmapfile"
-#	echo "    NAME '${2}.$newfdate'" >> "$tmpmapfile"
-#	echo "    TYPE RASTER" >> "$tmpmapfile"
-#	echo "    STATUS ON" >> "$tmpmapfile"
-#	echo "    TILEINDEX '$tindex.shp'" >> "$tmpmapfile"
-#	echo "    TILEITEM 'location'" >> "$tmpmapfile"
-#	echo "    METADATA" >> "$tmpmapfile"
-#	echo "      'wms_title'       '${2}.$newfdate'" >> "$tmpmapfile"
-#	echo "      'wms_srs'         'EPSG:4326 EPSG:900913'" >> "$tmpmapfile"
-#	echo "      'wms_timeextent'  '$starttime/$endtime'" >> "$tmpmapfile"
-# echo "      'wms_timeitem'    'TIME'" >> "$tmpmapfile"
-# echo "      'wms_timedefault' '$starttime'" >> "$tmpmapfile"
-#	echo "    END" >> "$tmpmapfile"
-#	echo "    PROJECTION" >> "$tmpmapfile"
-#	echo "     'proj=longlat'" >> "$tmpmapfile"
-#	echo "     'ellps=WGS84'" >> "$tmpmapfile"
-#	echo "     'datum=WGS84'" >> "$tmpmapfile"
-#	echo "     'no_defs'" >> "$tmpmapfile"
-#	echo "     ''" >> "$tmpmapfile"
-#	echo "    END" >> "$tmpmapfile"
-#	echo "  END" >> "$tmpmapfile"
-	
-#	for i in $(seq 1 95) ; do
-		
-#		grep $mapfile -A21 -e "^#layer ${i}$" |\
-#		 sed "s/^#layer ${i}$/#layer $(($i+1))/" >> "$tmpmapfile"
-#	done
-	
-#	if [[ -f "$mapfile" ]]
-#	then
-#		rm "$mapfile"
-#	fi
+##### mapfile #####
 
-#	mv "$tmpmapfile" "$mapfile"
-		
-	
-#fi
+starttime=$(ogrinfo -q -fid 0 WV.shp wv |\
+             grep -e 'time (String)' |\
+             sed 's/.*= //' |\
+             tr " " "T")
 
 
+echo "# raster layer" > "$mapfile"
+echo "  LAYER" >> "$mapfile"
+echo "    NAME 'Satilite_${2}'" >> "$mapfile"
+echo "    TYPE RASTER" >> "$mapfile"
+echo "    STATUS ON" >> "$mapfile"
+echo "    DUMP TRUE" >> "$mapfile"
+echo "    PROJECTION" >> "$mapfile"
+echo "     'proj=longlat'" >> "$mapfile"
+echo "     'ellps=WGS84'" >> "$mapfile"
+echo "     'datum=WGS84'" >> "$mapfile"
+echo "     'no_defs'" >> "$mapfile"
+echo "     ''" >> "$mapfile"
+echo "    END" >> "$mapfile"
+echo "    METADATA" >> "$mapfile"
+echo "      'wms_title'        '$2'" >> "$mapfile"
+echo "      'wms_srs'          'EPSG:900913 EPSG:4326'" >> "$mapfile"
+echo "      'wms_extent'       '-180 -90 180 90'" >> "$mapfile"
+echo "      'wms_timeextent'   '${starttime}Z/${time}Z/P${period}M'" >> "$mapfile"
+echo "      'wms_timeitem'     'time'" >> "$mapfile"
+echo "      'wms_timedefault'  '$time'" >> "$mapfile"
+echo "    END" >> "$mapfile"
+echo "    OFFSITE 0 0 0" >> "$mapfile"
+echo "    TILEINDEX '$2.shp'" >> "$mapfile"
+echo "  END" >> "$mapfile"
 
+
+##### kml #####
+
+part1="${www}/cgi-bin/sat_wms?SERVICE=WMS&amp;VERSION=1.1.1"
+part2="&amp;REQUEST=GetMap&amp;SRS=EPSG:4326"
+part3="&amp;LAYERS=Satilite_$2"
+part4="&amp;TRANSPARENT=TRUE&amp;FORMAT=image/png"
+part5="&amp;time=$time"
+
+if [[ "$(grep "$kml" -e "<begin>${time}Z</begin>")" = "" ]]
+then
+
+	echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > $tmpkml
+	echo "<kml xmlns=\"http://earth.google.com/kml/2.2\">" >> $tmpkml
+
+	echo "<GroundOverlay id='1'>" >> $tmpkml
+	echo "	<Icon>" >> $tmpkml
+	echo "		<href>${part1}${part2}${part3}${part4}${part5}</href>" >> $tmpkml
+	echo "		<viewRefreshMode>onRequest</viewRefreshMode>" >> $tmpkml
+	echo "		<viewFormat>" >> $tmpkml
+	echo "			BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth]&amp;WIDTH=[horizPixels]&amp;HEIGHT=[vertPixels]" >> $tmpkml
+	echo "		</viewFormat>" >> $tmpkml
+	echo "	</Icon>" >> $tmpkml
+	echo "	<TimeSpan>" >> $tmpkml
+	echo "		<begin>${time}Z</begin>" >> $tmpkml
+	echo "		<end>${endtime}Z</end>" >> $tmpkml
+	echo "	</TimeSpan>" >> $tmpkml
+	echo "</GroundOverlay>" >> $tmpkml
+
+	if [[ -f $kml ]]
+	then
+		for i in $( seq 1 $(( $(( 24 * 60 )) / $period + 1 )) )
+		do
+			grep $kml -A13 -e "<GroundOverlay id=${i}>" |\
+			 sed "s/GroundOverlay id='${i}'/GroundOverlay id='$(($i + 1))'/" >> $tmpkml
+		done
+	fi
+
+	echo "</kml>" >> $tmpkml
+
+	mv -f "$tmpkml" "$kml"
+
+fi
 
 ##### cleanup old #####
 
 
-find "@wwwdisk@/satmapserver/gisdata/" -mtime +1 -name "*.tiff" -exec rm -f {} \;
+#find "$wwwdisk/" -mtime +1 -name "*.tiff" -exec rm -f {} \;
 
 
 
