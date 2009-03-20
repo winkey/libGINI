@@ -45,7 +45,7 @@ endtime=$(date -u -d @$endunixtime "+%Y-%m-%dT%H:%M:%S")
 
 ##### dirs #####
 
-wwwdisk="@wwwdisk@/satmapserver/gisdata"
+wwwdisk="@wwwdisk@/satz"
 kmldisk="@wwwdisk@/kml/satz"
 www="@www@"
 wwwkml="@www@/kml/satz"
@@ -85,7 +85,7 @@ threshold=0;
 
 if [[ "$2" = "IR" ]] || [[ "$2" = "SFC-T" ]] || [[ "$2" = "PW" ]]
 then
-	threshold-110
+	threshold=110
 fi
 if [[ "$2" = "VIS" ]] || [[ "$2" = "SOUND-VIS" ]] || [[ "$2" = "CTP" ]]
 then
@@ -106,11 +106,11 @@ fi
 
 
 
-GINI2gdal -t $threshold -g "$gini" -o "$tiff"
+nice -n 5 GINI2gdal -t $threshold -g "$gini" -o "$tiff"
 
 ##### warp #####
 
-gdalwarp -dstnodata 0 -co TILED=YES -t_srs "$srs" "$tiff" "$warp"
+nice -n 5 gdalwarp -dstnodata 0 -co TILED=YES -t_srs "$srs" "$tiff" "$warp"
 
 if [[ -f "$tiff" ]]
 then
@@ -121,9 +121,9 @@ fi
 
 cd "${wwwdisk}/"
 
-gdaltindex "$tmp_tindex.shp" "$basewarp"
+nice -n 5 gdaltindex "$tmp_tindex.shp" "$basewarp"
 
-ogr2ogr -f SQLite -dsco METADATA=yes/no "$sqltindex" "$tmp_tindex.shp"
+nice -n 5 ogr2ogr -f SQLite -dsco METADATA=yes/no "$sqltindex" "$tmp_tindex.shp"
 
 sqlite3 "$sqltindex" "ALTER TABLE '$prodlower' ADD 'time' DATE;"
 sqlite3 "$sqltindex" "UPDATE '$prodlower' SET 'time' = datetime('$time');"
@@ -149,7 +149,7 @@ fi
 
 ##### mapfile #####
 
-starttime=$(ogrinfo -q -fid 0 WV.shp wv |\
+starttime=$(ogrinfo -q -fid 0 $2.shp $prodlower |\
              grep -e 'time (String)' |\
              sed 's/.*= //' |\
              tr " " "T")
@@ -194,11 +194,12 @@ then
 
 	echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > $tmpkml
 	echo "<kml xmlns=\"http://earth.google.com/kml/2.2\">" >> $tmpkml
-
+	echo "<Document>" >> $tmpkml
 	echo "<GroundOverlay id='1'>" >> $tmpkml
 	echo "	<Icon>" >> $tmpkml
 	echo "		<href>${part1}${part2}${part3}${part4}${part5}</href>" >> $tmpkml
-	echo "		<viewRefreshMode>onRequest</viewRefreshMode>" >> $tmpkml
+	echo "		<viewRefreshMode>onStop</viewRefreshMode>" >> $tmpkml
+	echo "		<viewRefreshTime>1</viewRefreshTime>" >> $tmpkml
 	echo "		<viewFormat>" >> $tmpkml
 	echo "			BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth]&amp;WIDTH=[horizPixels]&amp;HEIGHT=[vertPixels]" >> $tmpkml
 	echo "		</viewFormat>" >> $tmpkml
@@ -213,13 +214,15 @@ then
 	then
 		for i in $( seq 1 $(( $(( 24 * 60 )) / $period + 1 )) )
 		do
-			grep $kml -A13 -e "<GroundOverlay id=${i}>" |\
+			grep $kml -A13 -e "<GroundOverlay id=.${i}.>" |\
 			 sed "s/GroundOverlay id='${i}'/GroundOverlay id='$(($i + 1))'/" >> $tmpkml
 		done
 	fi
 
+	echo "</Document>" >> $tmpkml
 	echo "</kml>" >> $tmpkml
 
+	
 	mv -f "$tmpkml" "$kml"
 
 fi
@@ -227,7 +230,7 @@ fi
 ##### cleanup old #####
 
 
-#find "$wwwdisk/" -mtime +1 -name "*.tiff" -exec rm -f {} \;
+find "$wwwdisk/" -mtime +1 -name "*.tiff" -exec rm -f {} \;
 
 
 

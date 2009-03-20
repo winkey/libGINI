@@ -201,18 +201,17 @@ OGRSpatialReferenceH set_projection(
 	OGRSpatialReferenceH hSrsSRS = OSRNewSpatialReference(NULL);
 	double MinX, MinY, Dx, Dy, Ny, Nx, MaxX, MaxY;
 	
+	OSRSetGeogCS(hSrsSRS, "Sphere", NULL, "Sphere", RADIUS, 0.0,
+									"Greenwich", 0.0, NULL, 0.0);
+	
+	OSRSetGeogCS(hSRS, "Sphere", NULL, "Sphere", RADIUS, 0.0,
+							 "Greenwich", 0.0, NULL, 0.0);
+	
 	switch(pdb->proj) {
 
 		case MERCATOR:
 			OSRSetMercator(hSRS, pdb->mercator.latin, 0.0, 1, 0.0, 0.0);
 			
-			OSRSetGeogCS(hSRS, "Sphere", NULL, "Sphere", RADIUS, 0.0,
-								"Greenwich", 0.0, NULL, 0.0);
-			gdal_set_projection(hDS, hSRS);
-			OSRSetGeogCS(hSrsSRS, "Sphere", NULL, "Sphere", RADIUS, 0.0,
-									"Greenwich", 0.0, NULL, 0.0);
-			//OSRSetWellKnownGeogCS(hSrsSRS, "WGS84");
-	
 			MinX = pdb->mercator.lon1;
 			MinY = pdb->mercator.lat1;
 			MaxX = pdb->mercator.lon2;
@@ -225,23 +224,19 @@ OGRSpatialReferenceH set_projection(
 				
 				/***** does it wrap the dateline *****/
 				
-				if (MinX >= 0 && MaxX < 0) {
-					MinX -= 360;
-					//MinX *= -1;
+				if (MinX > MaxX) {
+					MinX += 180.0;
+					MaxX += 180.0;
 				}
-				
+					
 				transform_origin(hSrsSRS, hSRS, &MinX, &MinY);
 				transform_origin(hSrsSRS, hSRS, &MaxX, &MaxY);
-				pdb->mercator.Dx = (MaxX - MinX) / (double)Nx;
-				pdb->mercator.Dy = (MaxY - MinY) / (double)Ny;
+				Dx = (MaxX - MinX) / Nx;
+				Dy = (MaxY - MinY) / Ny;
 				MinX = pdb->mercator.lon1;
 				MinY = pdb->mercator.lat1;
 			}
 			
-			transform_origin(hSrsSRS, hSRS, &MinX, &MinY);
-			set_geotransform(hDS,
-											 MinX, pdb->mercator.Dx, 1,
-											 MinY, pdb->mercator.Dy, -1);
 			break;
 		
 		case POLAR:
@@ -250,51 +245,35 @@ OGRSpatialReferenceH set_projection(
 			else
 				OSRSetPS(hSRS, 60, pdb->polar.loV, 1.0, 0.0, 0.0);
 				
-			OSRSetGeogCS(hSRS, "Sphere", NULL, "Sphere", RADIUS, 0.0,
-								"Greenwich", 0.0, NULL, 0.0);
-			gdal_set_projection(hDS, hSRS);
-			
-			OSRSetGeogCS(hSrsSRS, "Sphere", NULL, "Sphere", RADIUS, 0.0,
-								"Greenwich", 0.0, NULL, 0.0);
-			//OSRSetWellKnownGeogCS(hSrsSRS, "WGS84");
-	
 			MinX = pdb->polar.lon1;
 			MinY = pdb->polar.lat1;
+			Dx = pdb->polar.Dx;
+			Dy = pdb->polar.Dy;
 			
-			transform_origin(hSrsSRS, hSRS, &MinX, &MinY);
-			set_geotransform(hDS,
-											 MinX/* + pdb->polar.Dx / 2.0*/, pdb->polar.Dx, 1,
-											 MinY/* - pdb->polar.Dy / 2.0*/, pdb->polar.Dy, -1);
 			break;
 		
 		case LAMBERT:
 			OSRSetLCC1SP(hSRS, pdb->lambert.tanlat, pdb->lambert.loV, 1.0, 0.0, 0.0);
 
-			OSRSetGeogCS(hSRS, "Sphere", NULL, "Sphere", RADIUS, 0.0,
-								"Greenwich", 0.0, NULL, 0.0);
-			gdal_set_projection(hDS, hSRS);
-			OSRSetGeogCS(hSrsSRS, "Sphere", NULL, "Sphere", RADIUS, 0.0,
-								"Greenwich", 0.0, NULL, 0.0);
-			//OSRSetWellKnownGeogCS(hSrsSRS, "WGS84");
-	
 			MinX = pdb->lambert.lon1;
 			MinY = pdb->lambert.lat1;
+			Dx = pdb->lambert.Dx;
+			Dy = pdb->lambert.Dy;
 			
-			transform_origin(hSrsSRS, hSRS, &MinX, &MinY);
-			set_geotransform(hDS,
-											 MinX/* + pdb->lambert.Dx / 2.0*/, pdb->lambert.Dx, 1 ,
-											 MinY/* - pdb->lambert.Dy / 2.0*/, pdb->lambert.Dy, -1);
 			break;
 	}
 
+	transform_origin(hSrsSRS, hSRS, &MinX, &MinY);
+	set_geotransform(hDS, MinX, Dx, 1, MinY, Dy, -1);
 	
 	
 
+	gdal_set_projection(hDS, hSRS);
 	
 	/***** cleanup *****/
 	
 	OSRDestroySpatialReference(hSrsSRS);
-	
+
 	return hSRS;
 }
 

@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl Created by Anjuta application wizard.
 
-AC_INIT(libGINI, 0.3)
+AC_INIT(libGINI, 0.4)
 
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 AM_CONFIG_HEADER(config.h)
@@ -63,6 +63,7 @@ Makefile
 apps/Makefile
 apps/include/Makefile
 etc/Makefile
+kml/Makefile
 scripts/Makefile
 src/Makefile
 

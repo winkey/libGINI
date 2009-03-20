@@ -109,12 +109,12 @@ void GINI_read (FILE *fp, GINI *data) {
 	/***** read the tacked on nws header *****/
 	
 	if (!fread(data->nws, NWS_LEN, 1, fp))
-		ERROR("NIDS_read");
+		ERROR("GINI_read");
 	
 	printf("%s\n", data->nws);
 	
 	if (!(buf.buf = malloc(BUFSIZE)))
-		ERROR("NIDS_read");
+		ERROR("GINI_read");
 	
 	buf.alloced = BUFSIZE;
 	

@@ -42,12 +42,12 @@ typedef struct {
 typedef struct {
 	int nx;
 	int ny;
-	float lat1;
-	float lon1;
+	double lat1;
+	double lon1;
 	int Reserved;
-	float loV;
-	float Dx;
-	float Dy;
+	double loV;
+	double Dx;
+	double Dy;
 	int centerflag;
 	GINI_Scanning_mode scanningmode;
 	float tanlat;
@@ -58,15 +58,15 @@ typedef GINI_Polar GINI_Lambert;
 typedef struct {
 	int nx;
 	int ny;
-	float lat1;
-	float lon1;
+	double lat1;
+	double lon1;
 	int resolution;
-	float lat2;
-	float lon2;
-	float Dx;
-	float Dy;
+	double lat2;
+	double lon2;
+	double Dx;
+	double Dy;
 	GINI_Scanning_mode scanningmode;
-	float latin;
+	double latin;
 } GINI_Mercator;
 
 typedef enum {
