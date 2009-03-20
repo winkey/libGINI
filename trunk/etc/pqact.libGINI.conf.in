@@ -2,5 +2,4 @@ NIMAGE	^satz/.*/.*/(.*)/([0-9]{8}) ([0-9]{4})/(.*)/([0-9]*)km/
 	FILE	 data/nimage/\1.\2.\3.\4.\5km
 
 NIMAGE	^satz/.*/.*/(.*)/([0-9]{8}) ([0-9]{4})/(.*)/([0-9]*)km/
-	EXEC	@bindir@/satz.sh data/nimage/\1.\2.\3.\4.\5km \1 \2 \3 \4 \5  
-satz/ch2/GOES-11/IR/20080723 0545/AK-REGIONAL/8km/
+	EXEC	-wait @bindir@/satz.sh data/nimage/\1.\2.\3.\4.\5km \1 \2 \3 \4 \5  

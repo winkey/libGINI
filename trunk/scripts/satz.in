@@ -12,30 +12,112 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
 
-
-gini="$1"
-tiff="/tmp/${1}.${2}.${3}.${4}.${5}km.tiff"
-warp="@wwwdisk@/satmapserver/${1}.${2}.${3}.${4}.${5}km.warped.tiff"
-
 srs="+proj=latlong +datum=WGS84"
 
-if [[ -f "$tiff" ]]
-then
-	rm "$tiff"
-fi
 
-if [[ -f "$warp" ]]
+
+startunixtime=$(( $(date -u -d "${3} ${4}" +%s) / 900 * 900 ))
+endunixtime=$(( $(date -u -d "${3} ${4} UTC + 15 min" +%s) / 900 * 900 ))
+
+starttime=$(date -u -d @$startunixtime "+%Y-%m-%dT%H:%M:%SZ")
+endtime=$(date -u -d @$endunixtime "+%Y-%m-%dT%H:%M:%SZ")
+
+newfdate=$(date -u -d @$startunixtime "+%Y%m%d.%H%M")
+
+gini="$1"
+
+tiff="/tmp/${2}.${3}.${4}.${5}.${6}km.tiff"
+warp="@wwwdisk@/satmapserver/gisdata/${2}.$newfdate.${5}.${6}km.warped.tiff"
+tindex="@wwwdisk@/satmapserver/gisdata/${2}"
+
+sqltindex="@wwwdisk@/satmapserver/gisdata/${2}.sqlite"
+
+mapfile="@wwwdisk@/satmapserver/gisdata/${2}.map"
+tmpmapfile="/tmp/${2}.map"
+
+if [[ ! -d "@wwwdisk@/satmapserver/gisdata" ]]
 then
-	rm "$warp"
+	mkdir -p "@wwwdisk@/satmapserver/gisdata"
 fi
 
 GINI2gdal -t 95 -g "$gini" -o "$tiff"
 
-gdalwarp -dstnodata 0 -co TILED=YES -co TFW=YES -t_srs "$srs" "$tiff" "$warp"
+gdalwarp -dstnodata 0 -co TILED=YES -t_srs "$srs" "$tiff" "$warp"
 
 if [[ -f "$tiff" ]]
 then
 	rm "$tiff"
 fi
+
+gdaltindex "$tindex.shp" "$warp"
+
+
+if [[ ! -f "$sqltindex" ]]
+then
+	ogr2ogr -f SQLite "$sqltindex" "$tindex.shp"
+else
+	ogr2ogr -update -f SQLite "$sqltindex" "$tindex"
+fi
+
+if [[ -f "$tindex.shp" ]]
+then
+	rm "$tindex.shp"
+	rm "$tindex.dbf"
+	rm "$tindex.shx"
+fi
+
+
+#	if [[ -f "$tmpmapfile" ]]
+#	then
+#		rm "$tmpmapfile"
+#	fi
+	
+#	echo "#layer 1" >> "$tmpmapfile"
+#	echo "  LAYER" >> "$tmpmapfile"
+#	echo "    NAME '${2}.$newfdate'" >> "$tmpmapfile"
+#	echo "    TYPE RASTER" >> "$tmpmapfile"
+#	echo "    STATUS ON" >> "$tmpmapfile"
+#	echo "    TILEINDEX '$tindex.shp'" >> "$tmpmapfile"
+#	echo "    TILEITEM 'location'" >> "$tmpmapfile"
+#	echo "    METADATA" >> "$tmpmapfile"
+#	echo "      'wms_title'       '${2}.$newfdate'" >> "$tmpmapfile"
+#	echo "      'wms_srs'         'EPSG:4326 EPSG:900913'" >> "$tmpmapfile"
+#	echo "      'wms_timeextent'  '$starttime/$endtime'" >> "$tmpmapfile"
+# echo "      'wms_timeitem'    'TIME'" >> "$tmpmapfile"
+# echo "      'wms_timedefault' '$starttime'" >> "$tmpmapfile"
+#	echo "    END" >> "$tmpmapfile"
+#	echo "    PROJECTION" >> "$tmpmapfile"
+#	echo "     'proj=longlat'" >> "$tmpmapfile"
+#	echo "     'ellps=WGS84'" >> "$tmpmapfile"
+#	echo "     'datum=WGS84'" >> "$tmpmapfile"
+#	echo "     'no_defs'" >> "$tmpmapfile"
+#	echo "     ''" >> "$tmpmapfile"
+#	echo "    END" >> "$tmpmapfile"
+#	echo "  END" >> "$tmpmapfile"
+	
+#	for i in $(seq 1 95) ; do
+		
+#		grep $mapfile -A21 -e "^#layer ${i}$" |\
+#		 sed "s/^#layer ${i}$/#layer $(($i+1))/" >> "$tmpmapfile"
+#	done
+	
+#	if [[ -f "$mapfile" ]]
+#	then
+#		rm "$mapfile"
+#	fi
+
+#	mv "$tmpmapfile" "$mapfile"
+		
+	
+#fi
+
+
+
+
+##### cleanup old #####
+
+
+find "@wwwdisk@/satmapserver/gisdata/" -mtime +1 -name "*.tiff" -exec rm -f {} \;
+
 
 
