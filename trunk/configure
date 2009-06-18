@@ -790,7 +790,8 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-HAVE_BASH
+PROJ_INCLUDE
+PROJ_STATIC
 WWWDISK
 WWW
 LIBTOOL
@@ -915,6 +916,8 @@ with_pic
 with_tags
 with_www
 with_wwwdisk
+with_cgidisk
+with_static_proj4
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1581,6 +1584,9 @@ Optional Packages:
   --with-www=someurl      base url to use in kml output
   --with-wwwdisk=/some/path
                           base dir to output kml and images
+  --with-cgidisk=/some/path
+                          base dir to output cgi scripts
+  --with-static-proj4=ARG Compile with PROJ.4 statically (ARG=no or path)
 
 Some influential environment variables:
   CC          C compiler command
@@ -6536,7 +6542,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 6539 "configure"' > conftest.$ac_ext
+  echo '#line 6545 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -9262,11 +9268,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9265: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9271: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9269: \$? = $ac_status" >&5
+   echo "$as_me:9275: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9552,11 +9558,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9555: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9561: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9559: \$? = $ac_status" >&5
+   echo "$as_me:9565: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9656,11 +9662,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9659: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9665: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9663: \$? = $ac_status" >&5
+   echo "$as_me:9669: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -12069,7 +12075,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 12072 "configure"
+#line 12078 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12169,7 +12175,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 12172 "configure"
+#line 12178 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14578,11 +14584,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14581: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14587: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14585: \$? = $ac_status" >&5
+   echo "$as_me:14591: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14682,11 +14688,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14685: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14691: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14689: \$? = $ac_status" >&5
+   echo "$as_me:14695: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16278,11 +16284,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16281: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16287: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16285: \$? = $ac_status" >&5
+   echo "$as_me:16291: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -16382,11 +16388,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16385: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16391: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16389: \$? = $ac_status" >&5
+   echo "$as_me:16395: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -18610,11 +18616,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:18613: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:18619: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:18617: \$? = $ac_status" >&5
+   echo "$as_me:18623: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -18900,11 +18906,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:18903: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:18909: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:18907: \$? = $ac_status" >&5
+   echo "$as_me:18913: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -19004,11 +19010,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19007: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:19013: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:19011: \$? = $ac_status" >&5
+   echo "$as_me:19017: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -21760,61 +21766,68 @@ See \`config.log' for more details." >&2;}
 fi
 
 
-# Extract the first word of "bash", so it can be a program name with args.
-set dummy bash; ac_word=$2
-{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if test "${ac_cv_prog_HAVE_BASH+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  if test -n "$HAVE_BASH"; then
-  ac_cv_prog_HAVE_BASH="$HAVE_BASH" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_prog_HAVE_BASH="true"
-    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-IFS=$as_save_IFS
 
-  test -z "$ac_cv_prog_HAVE_BASH" && ac_cv_prog_HAVE_BASH="false"
-fi
-fi
-HAVE_BASH=$ac_cv_prog_HAVE_BASH
-if test -n "$HAVE_BASH"; then
-  { $as_echo "$as_me:$LINENO: result: $HAVE_BASH" >&5
-$as_echo "$HAVE_BASH" >&6; }
-else
-  { $as_echo "$as_me:$LINENO: result: no" >&5
-$as_echo "no" >&6; }
-fi
+# Check whether --with-cgidisk was given.
+if test "${with_cgidisk+set}" = set; then
+  withval=$with_cgidisk; if test -n "$withval"
+  then
+    CGIDISK="$withval"
 
-
-if test $HAVE_BASH = "false"; then
-  { { $as_echo "$as_me:$LINENO: error: in \`$ac_pwd':" >&5
+  else
+		{ { $as_echo "$as_me:$LINENO: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-{ { $as_echo "$as_me:$LINENO: error: bash not found
+{ { $as_echo "$as_me:$LINENO: error: --with-cgidisk=/some/path MUST be specified
 See \`config.log' for more details." >&5
-$as_echo "$as_me: error: bash not found
+$as_echo "$as_me: error: --with-cgidisk=/some/path MUST be specified
 See \`config.log' for more details." >&2;}
    { (exit 1); exit 1; }; }; }
+	fi
+else
+  { { $as_echo "$as_me:$LINENO: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+{ { $as_echo "$as_me:$LINENO: error: --with-cgidisk=/some/path MUST be specified
+See \`config.log' for more details." >&5
+$as_echo "$as_me: error: --with-cgidisk=/some/path MUST be specified
+See \`config.log' for more details." >&2;}
+   { (exit 1); exit 1; }; }; }
+
 fi
 
-{ $as_echo "$as_me:$LINENO: checking for GDALAllRegister in -lgdal" >&5
-$as_echo_n "checking for GDALAllRegister in -lgdal... " >&6; }
-if test "${ac_cv_lib_gdal_GDALAllRegister+set}" = set; then
+
+{ $as_echo "$as_me:$LINENO: checking how to link PROJ.4 library" >&5
+$as_echo_n "checking how to link PROJ.4 library... " >&6; }
+
+
+# Check whether --with-static_proj4 was given.
+if test "${with_static_proj4+set}" = set; then
+  withval=$with_static_proj4;
+fi
+
+
+if test "x$with_static_proj4" = "xno" -o "x$with_static_proj4" = "x"; then
+
+  PROJ_STATIC=no
+  { $as_echo "$as_me:$LINENO: result: link dynamically." >&5
+$as_echo "link dynamically." >&6; }
+
+else
+
+  PROJ_STATIC=yes
+  { $as_echo "$as_me:$LINENO: result: link statically." >&5
+$as_echo "link statically." >&6; }
+
+  ORIG_LIBS="$LIBS"
+  PROJ_LIB="-lproj"
+
+  if test "x$with_static_proj4" = "xyes" ; then
+    LIBS="$PROJ_LIB $ORIG_LIBS"
+    { $as_echo "$as_me:$LINENO: checking for pj_init in -lproj" >&5
+$as_echo_n "checking for pj_init in -lproj... " >&6; }
+if test "${ac_cv_lib_proj_pj_init+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lgdal  $LIBS"
+LIBS="-lproj  $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -21828,11 +21841,11 @@ cat >>conftest.$ac_ext <<_ACEOF
 #ifdef __cplusplus
 extern "C"
 #endif
-char GDALAllRegister ();
+char pj_init ();
 int
 main ()
 {
-return GDALAllRegister ();
+return pj_init ();
   ;
   return 0;
 }
@@ -21858,12 +21871,12 @@ $as_echo "$ac_try_echo") >&5
 	 test "$cross_compiling" = yes ||
 	 $as_test_x conftest$ac_exeext
        }; then
-  ac_cv_lib_gdal_GDALAllRegister=yes
+  ac_cv_lib_proj_pj_init=yes
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	ac_cv_lib_gdal_GDALAllRegister=no
+	ac_cv_lib_proj_pj_init=no
 fi
 
 rm -rf conftest.dSYM
@@ -21871,23 +21884,413 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_gdal_GDALAllRegister" >&5
-$as_echo "$ac_cv_lib_gdal_GDALAllRegister" >&6; }
-if test "x$ac_cv_lib_gdal_GDALAllRegister" = x""yes; then
-  HAVE_GDAL=true
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_proj_pj_init" >&5
+$as_echo "$ac_cv_lib_proj_pj_init" >&6; }
+if test "x$ac_cv_lib_proj_pj_init" = x""yes; then
+  PROJ_STATIC=yes
 else
-  HAVE_GDAL=false
+  PROJ_STATIC=no
 fi
 
-if test $HAVE_GDAL = "false"; then
-  { { $as_echo "$as_me:$LINENO: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-{ { $as_echo "$as_me:$LINENO: error: gdal not found
-See \`config.log' for more details." >&5
-$as_echo "$as_me: error: gdal not found
-See \`config.log' for more details." >&2;}
-   { (exit 1); exit 1; }; }; }
+  else
+
+    LIBS="-L$with_static_proj4/src $PROJ_LIB $ORIG_LIBS"
+    { $as_echo "$as_me:$LINENO: checking for pj_init in -lproj" >&5
+$as_echo_n "checking for pj_init in -lproj... " >&6; }
+if test "${ac_cv_lib_proj_pj_init+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lproj  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char pj_init ();
+int
+main ()
+{
+return pj_init ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  ac_cv_lib_proj_pj_init=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_proj_pj_init=no
 fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_proj_pj_init" >&5
+$as_echo "$ac_cv_lib_proj_pj_init" >&6; }
+if test "x$ac_cv_lib_proj_pj_init" = x""yes; then
+  PROJ_STATIC=yes
+else
+  PROJ_STATIC=no
+fi
+
+
+    if test "$PROJ_STATIC" = "no"; then
+
+      unset ac_cv_lib_proj_pj_init
+
+      LIBS="-L$with_static_proj4/lib $PROJ_LIB $ORIG_LIBS"
+      { $as_echo "$as_me:$LINENO: checking for pj_init in -lproj" >&5
+$as_echo_n "checking for pj_init in -lproj... " >&6; }
+if test "${ac_cv_lib_proj_pj_init+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lproj  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char pj_init ();
+int
+main ()
+{
+return pj_init ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  ac_cv_lib_proj_pj_init=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_proj_pj_init=no
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_proj_pj_init" >&5
+$as_echo "$ac_cv_lib_proj_pj_init" >&6; }
+if test "x$ac_cv_lib_proj_pj_init" = x""yes; then
+  PROJ_STATIC=yes
+else
+  PROJ_STATIC=no
+fi
+
+    fi
+
+    if test "$PROJ_STATIC" = "no"; then
+      unset ac_cv_lib_proj_pj_init
+      LIBS="-L$with_static_proj4/src/.libs $PROJ_LIB $ORIG_LIBS"
+      { $as_echo "$as_me:$LINENO: checking for pj_init in -lproj" >&5
+$as_echo_n "checking for pj_init in -lproj... " >&6; }
+if test "${ac_cv_lib_proj_pj_init+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lproj  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char pj_init ();
+int
+main ()
+{
+return pj_init ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  ac_cv_lib_proj_pj_init=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_proj_pj_init=no
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_proj_pj_init" >&5
+$as_echo "$ac_cv_lib_proj_pj_init" >&6; }
+if test "x$ac_cv_lib_proj_pj_init" = x""yes; then
+  PROJ_STATIC=yes
+else
+  PROJ_STATIC=no
+fi
+
+    fi
+
+    if test "$PROJ_STATIC" = "no"; then
+      unset ac_cv_lib_proj_pj_init
+      LIBS="-L$with_static_proj4 $PROJ_LIB $ORIG_LIBS"
+      { $as_echo "$as_me:$LINENO: checking for pj_init in -lproj" >&5
+$as_echo_n "checking for pj_init in -lproj... " >&6; }
+if test "${ac_cv_lib_proj_pj_init+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lproj  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char pj_init ();
+int
+main ()
+{
+return pj_init ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  ac_cv_lib_proj_pj_init=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_proj_pj_init=no
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_proj_pj_init" >&5
+$as_echo "$ac_cv_lib_proj_pj_init" >&6; }
+if test "x$ac_cv_lib_proj_pj_init" = x""yes; then
+  PROJ_STATIC=yes
+else
+  PROJ_STATIC=no
+fi
+
+    fi
+
+    if test "$PROJ_STATIC" = "no"; then
+      unset ac_cv_lib_proj_pj_init
+      LIBS="$PROJ_LIB $ORIG_LIBS"
+      { $as_echo "$as_me:$LINENO: checking for pj_init in -lproj" >&5
+$as_echo_n "checking for pj_init in -lproj... " >&6; }
+if test "${ac_cv_lib_proj_pj_init+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lproj  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char pj_init ();
+int
+main ()
+{
+return pj_init ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  ac_cv_lib_proj_pj_init=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_proj_pj_init=no
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_proj_pj_init" >&5
+$as_echo "$ac_cv_lib_proj_pj_init" >&6; }
+if test "x$ac_cv_lib_proj_pj_init" = x""yes; then
+  PROJ_STATIC=yes
+else
+  PROJ_STATIC=no
+fi
+
+    fi
+
+  fi
+
+  if test "$PROJ_STATIC" = "no"; then
+    LIBS="$ORIG_LIBS"
+  fi
+
+  if test -r "$with_static_proj4/src/proj_api.h" ; then
+    PROJ_INCLUDE="-I$with_static_proj4/src"
+  elif test -r "$with_static_proj4/include/proj_api.h" ; then
+    PROJ_INCLUDE="-I$with_static_proj4/include"
+  elif test -r "$with_static_proj4/proj_api.h" ; then
+    PROJ_INCLUDE="-I$with_static_proj4"
+  fi
+
+fi
+
+
+
 
 
 
