@@ -62,6 +62,7 @@ AC_OUTPUT([
 Makefile
 apps/Makefile
 apps/include/Makefile
+cgi/Makefile
 etc/Makefile
 kml/Makefile
 scripts/Makefile

@@ -1,0 +1,111 @@
+#!/bin/sh 
+
+#           mkmaplayer.sh.in
+#  Sat Jun 13 06:52:49 2009
+#  Copyright  2009  Brian Case
+#  <rush@winkey.org>
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
+
+##### crontab this script every min #####
+
+source /etc/profile
+
+prod=$1
+prodlower=$(echo "$prod" | tr [A-Z] [a-z])
+
+wwwdisk="@wwwdisk@/sat"
+www="@www@"
+
+mapfile="$wwwdisk/${prod}.map"
+
+
+starttime=$(psql sat -q -P tuples_only -c "select time \
+                                               FROM ${prodlower} \
+                                               ORDER BY time ASC \
+                                               LIMIT 1;")
+
+starttime=$(date -d "$starttime" "+%Y-%m-%dT%H:%M:%SZ")
+
+endtime=$(psql sat -q -P tuples_only -c "select time \
+                                               FROM ${prodlower} \
+                                               ORDER BY time DESC \
+                                               LIMIT 1;")
+
+endtime=$(date -d "$endtime" "+%Y-%m-%dT%H:%M:%SZ")
+
+##### time #####
+
+if [[ "$1" = "CLD" ]] || [[ "$1" = "CTP" ]] || [[ "$1" = "LI" ]] || [[ "$1" = "SFC-T" ]]
+then
+	period=60
+	poffset=0
+else
+	if [[ "$1" = "PRXX" ]] || [[ "$1" = "PW" ]]
+	then
+	  poffset=15
+		period=30
+	else
+		period=15
+		poffset=0
+	fi
+fi
+
+cat > "$mapfile" <<EOF
+# polygon layer
+  LAYER
+    NAME 'Satilite_${prodlower}_idx'
+    TYPE POLYGON
+    STATUS ON
+		DATA "wkb_geometry FROM (select ogc_fid, location, wkb_geometry, timestamp '%time%' AS time FROM ${prodlower} WHERE (wkb_geometry, time) IN (SELECT wkb_geometry, max(time) AS time FROM ${prodlower} WHERE time <= '%time%' AND time >= timestamp '%time%' - INTERVAL '10 min' GROUP BY wkb_geometry) ORDER BY wkb_geometry ) AS bar USING UNIQUE ogc_fid USING SRID=-1"
+    METADATA
+      'wms_title'        '${prod}'
+      'wms_srs'          'EPSG:900913 EPSG:4326'
+      'wms_extent'       '-180 -90 180 90'
+      'wms_timeextent'   '${starttime}/${endtime}/P${period}M'
+      'wms_timeitem'     'time'
+      'wms_timedefault'  '${endtime}'
+    END
+    CONNECTION 'dbname=sat'
+    CONNECTIONTYPE postgis
+  END
+
+# raster layer
+  LAYER
+    NAME 'Satilite_${prodlower}'
+    TYPE RASTER
+    STATUS ON
+    DUMP TRUE
+    PROJECTION
+     'proj=longlat'
+     'ellps=WGS84'
+     'datum=WGS84'
+     'no_defs'
+     ''
+    END
+    METADATA
+      'wms_title'        '${prod}'
+      'wms_srs'          'EPSG:900913 EPSG:4326'
+      'wms_extent'       '-180 -90 180 90'
+      'wms_timeextent'   '${starttime}/${endtime}/P${period}M'
+      'wms_timeitem'     'time'
+      'wms_timedefault'  '${endtime}'
+    END
+#    OFFSITE 0 0 0
+    TILEITEM 'location'
+    TILEINDEX 'Satilite_${prodlower}_idx'
+  END
+EOF
+																																																																																																																						

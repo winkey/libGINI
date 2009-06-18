@@ -5,7 +5,8 @@ SUBDIRS = src \
 	apps\
 	etc\
 	scripts \
-	kml
+	kml \
+	cgi
 
 libginidocdir = ${prefix}/doc/libgini
 libginidoc_DATA = \
