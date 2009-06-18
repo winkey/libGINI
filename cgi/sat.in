@@ -1,0 +1,187 @@
+#!/bin/bash
+
+#           sat.in
+#  Sat May 30 23:01:31 2009
+#  Copyright  2009  Brian Case
+#  <rush@winkey.org>
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
+
+www=@www@
+
+
+
+default_step=15
+default_frames=30
+
+##### set product #####
+
+prod=$(echo "$QUERY_STRING" | sed -n 's/^.*prod=\([^&]*\).*$/\1/p')
+if [[ "$prod" == "" ]] ; then prod=ir ; fi
+
+if [[ "$prod" = "cld" ]] || [[ "$prod" = "ctp" ]] || [[ "$prod" = "li" ]] || [[ "$prod" = "sfc-t" ]]
+then
+	default_step=60
+	default_frames=10
+else
+	if [[ "$prod" = "prxx" ]] || [[ "$prod" = "pw" ]]
+	then
+	  default_step=30
+		default_frames=20
+	else
+		default_step=15
+		default_frames=40
+	fi
+fi
+
+##### set end #####
+
+end=$(echo "$QUERY_STRING" | sed -n 's/^.*end=\([^&]*\).*$/\1/p' | sed 's/T/ /')
+
+myend=$(date -d "$(psql -d sat -t -c "SELECT time FROM $prod ORDER BY time DESC LIMIT 1;" | sed -e 's/^ //')"  +%s)
+
+if [[ "$end" != "" ]]
+then
+        end=$(date -d "$end"  +%s)
+        if [[ ! $end -gt $myend ]]
+        then
+                myend=$end
+        fi
+fi
+
+##### set begin #####
+
+begin=$(echo "$QUERY_STRING" | sed -n 's/^.*begin=\([^&]*\).*$/\1/p' | sed 's/T/ /')
+
+mybegin=$(date -d "$(psql -d sat -t -c "SELECT time FROM $prod ORDER BY time ASC LIMIT 1;" | sed -e 's/^ //')"  +%s)
+
+if [[ "$begin" != "" ]]
+then
+        begin=$(date -d "$begin"  +%s)
+        if [[ ! $begin -lt $mybegin ]]
+        then
+                mybegin=$begin
+        fi
+fi
+
+##### numframes #####
+
+numframes=$(echo "$QUERY_STRING" | sed -n 's/^.*numframes=\([^0-9]*\).*$/\1/p')
+
+if [[ ! "$numframes" == "" ]]
+then
+        mynumframes=$numframes
+else
+        mynumframes=$default_frames
+fi
+
+##### step #####
+
+step=$(echo "$QUERY_STRING" | sed -n 's/^.*step=\([^0-9]*\).*$/\1/p')
+
+if [[ ! "$step" == "" ]]
+then
+        mystep=$step
+else
+        mystep=$default_step
+fi
+
+##### step not set #####
+
+if [[ "$begin" != "" ]] && [[ "$end" != "" ]] && [[ "$numframes" != "" ]] && [[ "$step" == "" ]]
+then
+        mystep=$(($(($myend-$mybegin))/$numframes))
+fi
+
+##### begin not set #####
+
+if [[ "$begin" == "" ]]
+then
+        mybegin=$(($myend-$(($mynumframes*$mystep*60))))
+fi
+
+##### end not set #####
+
+if [[ "$end" == "" ]]
+then
+        myend=$(($mybegin+$(($mynumframes*$mystep*60))))
+fi
+
+##### web header #####
+
+#cat <<EOF
+#Context-type: text/html
+#
+#begin = $begin end = $end step = $step numframes = $numframes
+#mybegin = $mybegin myend = $myend mystep = $mystep mynumframes = $mynumframes
+#
+#EOF
+
+cat <<EOF
+Content-type: application/vnd.google-earth.kml
+Content-Disposition: attachment; filename=$prod.kml
+Content-Title: $prod
+
+EOF
+
+##### kml header #####
+
+cat <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+  <name>$prod</name>
+  <open>0</open>
+EOF
+
+##### kml times #####
+
+id=1
+for t in $(seq -f %.20g $mybegin $(($mystep*60)) $myend)
+do
+        st=$(date -u -d @$t "+%Y-%m-%dT%H:%M:%SZ")
+        et=$(date -u -d @$(($t + $(($mystep*60)))) "+%Y-%m-%dT%H:%M:%SZ")
+
+        part1="${www}/cgi-bin/sat_wms?SERVICE=WMS&amp;VERSION=1.1.1"
+        part2="&amp;REQUEST=GetMap&amp;SRS=EPSG:4326"
+        part3="&amp;LAYERS=Satilite_$prod"
+        part4="&amp;TRANSPARENT=TRUE&amp;FORMAT=image/png"
+        part5="&amp;time=$st"
+
+cat <<EOF
+  <GroundOverlay id="$id">
+    <TimeSpan>
+      <begin>$st</begin>
+      <end>$et</end>
+    </TimeSpan>
+    <Icon>
+      <href>${part1}${part2}${part3}${part4}${part5}</href>
+      <viewRefreshMode>onStop</viewRefreshMode>
+      <viewFormat>BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth]&amp;WIDTH=[horizPixels]&amp;HEIGHT=[vertPixels]</viewFormat>
+      <viewBoundScale>1</viewBoundScale>
+    </Icon>
+    <LatLonBox></LatLonBox>
+  </GroundOverlay>
+EOF
+
+        id=$(($id+1))
+done
+
+##### kml footer #####
+
+cat <<EOF
+</Document></kml>
+EOF
+
