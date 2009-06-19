@@ -165,7 +165,8 @@ top_srcdir = @top_srcdir@
 www = @WWW@
 wwwdisk = @WWWDISK@
 bin_SCRIPTS = \
-	satz.sh
+	satz.sh \
+	mksatmaplayer.sh
 
 CLEANFILES = $(bin_SCRIPTS)
 EXTRA_DIST = \
@@ -365,10 +366,15 @@ uninstall-am: uninstall-binSCRIPTS
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	uninstall uninstall-am uninstall-binSCRIPTS
 
+	mksatmaplayer.sh.in
 
 satz.sh: satz.in Makefile
 	$(do_subst) < $(srcdir)/satz.in > satz.sh
 	chmod +x satz.sh
+
+mksatmaplayer.sh: mksatmaplayer.sh.in Makefile
+	$(do_subst) < $(srcdir)/mksatmaplayer.sh.in > mksatmaplayer.sh
+	chmod +x mksatmaplayer.sh
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
