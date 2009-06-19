@@ -52,7 +52,7 @@ AC_ARG_WITH(cgidisk,
   if test -n "$withval"
   then
     CGIDISK="$withval"
-    AC_SUBST(WWWDISK)
+    AC_SUBST(CGIDISK)
   else
 		[AC_MSG_FAILURE([--with-cgidisk=/some/path MUST be specified])]
 	fi,
