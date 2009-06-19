@@ -94,7 +94,7 @@ cat > "$mapfile" <<EOF
     NAME 'Satilite_${prodlower}_idx'
     TYPE POLYGON
     STATUS ON
-		DATA "wkb_geometry FROM (select ogc_fid, location, wkb_geometry, timestamp '%time%' AS time FROM ${prodlower} WHERE (wkb_geometry, time) IN (SELECT wkb_geometry, max(time) AS time FROM ${prodlower} WHERE timestamp time < '%time%' + INTERVAL '$(($interval/2)) min' AND time >= timestamp '%time%' - INTERVAL '$(($interval/2)) min' GROUP BY wkb_geometry) ORDER BY wkb_geometry ) AS bar USING UNIQUE ogc_fid USING SRID=-1"
+		DATA "wkb_geometry FROM (select ogc_fid, location, wkb_geometry, timestamp '%time%' AS time FROM ${prodlower} WHERE (wkb_geometry, time) IN (SELECT wkb_geometry, max(time) AS time FROM ${prodlower} WHERE timestamp time < '%time%' + INTERVAL '$((${period}/2)) min' AND time >= timestamp '%time%' - INTERVAL '$((${period}/2)) min' GROUP BY wkb_geometry) ORDER BY wkb_geometry ) AS bar USING UNIQUE ogc_fid USING SRID=-1"
     METADATA
       'wms_title'        '${prod}'
       'wms_srs'          'EPSG:900913 EPSG:4326'
@@ -128,16 +128,16 @@ cat > "$mapfile" <<EOF
       'wms_timeitem'     'time'
       'wms_timedefault'  '${endtime}'
     END
-		
-		CLASS
-			EXPRESSION ([pixel] < 80)
-			STYLE
-				COLOR 0 0 0
-			END
-		END
-  
-		OFFSITE 0 0 0
-		
+
+    CLASS
+      EXPRESSION ([pixel] < 80)
+      STYLE
+        COLOR 0 0 0
+      END
+    END
+    
+    OFFSITE 0 0 0
+    
     TILEITEM 'location'
     TILEINDEX 'Satilite_${prodlower}_idx'
   END
