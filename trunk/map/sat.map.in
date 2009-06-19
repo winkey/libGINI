@@ -101,7 +101,7 @@ MAP
   INCLUDE '60.map'
   INCLUDE 'ctp.map'
   INCLUDE 'cld.map'
-  INCLUDE 'li.map'
-  INCLUDE 'sfc_t.map'
+  #INCLUDE 'li.map'
+  #INCLUDE 'sfc_t.map'
 
 END
