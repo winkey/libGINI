@@ -41,7 +41,7 @@ prodlower=`echo "$2" | tr [A-Z] [a-z]`
 gini="$1"
 
 tiff="/tmp/${2}.${3}.${4}.${5}.${6}km.tiff"
-warp="$wwwdisk/${2}.$newfdate.${5}.${6}km.tiff"
+warp="$wwwdisk/${3}/${2}.$newfdate.${5}.${6}km.img"
 
 ##### decode #####
 
