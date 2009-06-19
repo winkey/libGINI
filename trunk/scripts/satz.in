@@ -29,9 +29,9 @@ newfdate=$(date -u -d @$unixtime "+%Y%m%d.%H%M:%S")
 wwwdisk="@wwwdisk@/sat"
 www="@www@"
 
-if [[ ! -d "$wwwdisk" ]]
+if [[ ! -d "$wwwdisk/${3}" ]]
 then
-	mkdir -p "$wwwdisk"
+	mkdir -p "$wwwdisk/${3}"
 fi
 
 ##### files #####
