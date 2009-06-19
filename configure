@@ -22295,7 +22295,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile apps/Makefile apps/include/Makefile cgi/Makefile etc/Makefile kml/Makefile scripts/Makefile src/Makefile"
+ac_config_files="$ac_config_files Makefile apps/Makefile apps/include/Makefile cgi/Makefile etc/Makefile kml/Makefile map/Makefile scripts/Makefile src/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -22952,6 +22952,7 @@ do
     "cgi/Makefile") CONFIG_FILES="$CONFIG_FILES cgi/Makefile" ;;
     "etc/Makefile") CONFIG_FILES="$CONFIG_FILES etc/Makefile" ;;
     "kml/Makefile") CONFIG_FILES="$CONFIG_FILES kml/Makefile" ;;
+    "map/Makefile") CONFIG_FILES="$CONFIG_FILES map/Makefile" ;;
     "scripts/Makefile") CONFIG_FILES="$CONFIG_FILES scripts/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
 
