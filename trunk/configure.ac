@@ -144,6 +144,7 @@ apps/include/Makefile
 cgi/Makefile
 etc/Makefile
 kml/Makefile
+map/Makefile
 scripts/Makefile
 src/Makefile
 

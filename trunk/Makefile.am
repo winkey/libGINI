@@ -6,7 +6,8 @@ SUBDIRS = src \
 	etc\
 	scripts \
 	kml \
-	cgi
+	cgi \
+	map
 
 libginidocdir = ${prefix}/doc/libgini
 libginidoc_DATA = \
