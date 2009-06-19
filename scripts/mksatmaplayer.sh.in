@@ -26,6 +26,31 @@ source /etc/profile
 prod=$1
 prodlower=$(echo "$prod" | tr [A-Z] [a-z])
 
+##### transparency threshold #####
+
+threshold=0;
+
+if [[ "$prod" = "ir" ]] || [[ "$prod" = "sfc-t" ]] || [[ "$prod" = "pw" ]]
+then
+        threshold=110
+fi
+if [[ "$prod" = "vis" ]] || [[ "$prod" = "sound-vis" ]] || [[ "$prod" = "ctp" ]]
+then
+        threshold=80
+fi
+if [[ "$prod" = "li" ]]
+then
+        threshold=140
+fi
+if [[ "$prod" = "cld" ]]
+then
+        threshold=40
+fi
+if [[ "$prod" = "40" ]]
+then
+        threshold=10
+fi
+
 wwwdisk="@wwwdisk@/sat"
 www="@www@"
 
@@ -48,12 +73,12 @@ endtime=$(date -d "$endtime" "+%Y-%m-%dT%H:%M:%SZ")
 
 ##### time #####
 
-if [[ "$1" = "CLD" ]] || [[ "$1" = "CTP" ]] || [[ "$1" = "LI" ]] || [[ "$1" = "SFC-T" ]]
+if [[ "$prod" = "cld" ]] || [[ "$prod" = "ctp" ]] || [[ "$prod" = "li" ]] || [[ "$prod" = "sfc-t" ]]
 then
 	period=60
 	poffset=0
 else
-	if [[ "$1" = "PRXX" ]] || [[ "$1" = "PW" ]]
+	if [[ "$prod" = "prxx" ]] || [[ "$prod" = "pw" ]]
 	then
 	  poffset=15
 		period=30
@@ -69,7 +94,7 @@ cat > "$mapfile" <<EOF
     NAME 'Satilite_${prodlower}_idx'
     TYPE POLYGON
     STATUS ON
-		DATA "wkb_geometry FROM (select ogc_fid, location, wkb_geometry, timestamp '%time%' AS time FROM ${prodlower} WHERE (wkb_geometry, time) IN (SELECT wkb_geometry, max(time) AS time FROM ${prodlower} WHERE time <= '%time%' AND time >= timestamp '%time%' - INTERVAL '10 min' GROUP BY wkb_geometry) ORDER BY wkb_geometry ) AS bar USING UNIQUE ogc_fid USING SRID=-1"
+		DATA "wkb_geometry FROM (select ogc_fid, location, wkb_geometry, timestamp '%time%' AS time FROM ${prodlower} WHERE (wkb_geometry, time) IN (SELECT wkb_geometry, max(time) AS time FROM ${prodlower} WHERE timestamp time < '%time%' + INTERVAL '$(($interval/2)) min' AND time >= timestamp '%time%' - INTERVAL '$(($interval/2)) min' GROUP BY wkb_geometry) ORDER BY wkb_geometry ) AS bar USING UNIQUE ogc_fid USING SRID=-1"
     METADATA
       'wms_title'        '${prod}'
       'wms_srs'          'EPSG:900913 EPSG:4326'
@@ -103,7 +128,16 @@ cat > "$mapfile" <<EOF
       'wms_timeitem'     'time'
       'wms_timedefault'  '${endtime}'
     END
-#    OFFSITE 0 0 0
+		
+		CLASS
+			EXPRESSION ([pixel] < 80)
+			STYLE
+				COLOR 0 0 0
+			END
+		END
+  
+		OFFSITE 0 0 0
+		
     TILEITEM 'location'
     TILEINDEX 'Satilite_${prodlower}_idx'
   END
