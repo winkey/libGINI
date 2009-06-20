@@ -50,7 +50,7 @@ nice -n 5 GINI2gdal -t 0 -g "$gini" -o "$tiff"
 
 ##### warp #####
 
-nice -n 5 gdalwarp -dstnodata 0 -of hfa -co compressed=yes -co nbits=4 -t_srs "$srs" "$tiff" "$warp"
+nice -n 5 gdalwarp -dstnodata 0 -of hfa -co compressed=yes -t_srs "$srs" "$tiff" "$warp"
 
 if [[ -f "$tiff" ]]
 then
