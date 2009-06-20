@@ -36,7 +36,7 @@ fi
 
 ##### files #####
 
-prod=`echo "$2" | tr . _`
+prod=`echo "$2" | tr . _ | tr - _`
 prodlower=`echo "$prod" | tr [A-Z] [a-z]`
 
 gini="$1"

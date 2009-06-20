@@ -30,11 +30,11 @@ prodlower=$(echo "$prod" | tr [A-Z] [a-z])
 
 threshold=0;
 
-if [[ "$prod" = "ir" ]] || [[ "$prod" = "sfc-t" ]] || [[ "$prod" = "pw" ]]
+if [[ "$prod" = "ir" ]] || [[ "$prod" = "sfc_t" ]] || [[ "$prod" = "pw" ]]
 then
         threshold=110
 fi
-if [[ "$prod" = "vis" ]] || [[ "$prod" = "sound-vis" ]] || [[ "$prod" = "ctp" ]]
+if [[ "$prod" = "vis" ]] || [[ "$prod" = "sound_vis" ]] || [[ "$prod" = "ctp" ]]
 then
         threshold=80
 fi

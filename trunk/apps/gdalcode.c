@@ -51,7 +51,7 @@
 #include "gdalcode.h"
 #include "../src/error.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 /*******************************************************************************
 	function to open the raster file
