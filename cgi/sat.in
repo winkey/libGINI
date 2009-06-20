@@ -31,7 +31,7 @@ default_frames=30
 prod=$(echo "$QUERY_STRING" | sed -n 's/^.*prod=\([^&]*\).*$/\1/p')
 if [[ "$prod" == "" ]] ; then prod=ir ; fi
 
-if [[ "$prod" = "cld" ]] || [[ "$prod" = "ctp" ]] || [[ "$prod" = "li" ]] || [[ "$prod" = "sfc-t" ]]
+if [[ "$prod" = "cld" ]] || [[ "$prod" = "ctp" ]] || [[ "$prod" = "li" ]] || [[ "$prod" = "sfc_t" ]]
 then
 	default_step=60
 	default_frames=10

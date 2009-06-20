@@ -107,7 +107,7 @@
 			<name>SFC-T</name>
 			<visibility>0</visibility>
 			<Link>
-				<href>@www@/cgi-bin/satwrap?prod=sfc-t</href>
+				<href>@www@/cgi-bin/satwrap?prod=sfc_t</href>
 				<viewRefreshMode>onStop</viewRefreshMode>
 				<viewRefreshTime>0</viewRefreshTime>
 			</Link>
@@ -116,7 +116,7 @@
 			<name>SOUND-3.98</name>
 			<visibility>0</visibility>
 			<Link>
-				<href>@www@/cgi-bin/satwrap?prod=sound-3_98</href>
+				<href>@www@/cgi-bin/satwrap?prod=sound_3_98</href>
 				<viewRefreshMode>onStop</viewRefreshMode>
 				<viewRefreshTime>0</viewRefreshTime>
 			</Link>
@@ -125,7 +125,7 @@
 			<name>SOUND-4.45</name>
 			<visibility>0</visibility>
 			<Link>
-				<href>@www@/cgi-bin/satwrap?prod=sound-4_45</href>
+				<href>@www@/cgi-bin/satwrap?prod=sound_4_45</href>
 				<viewRefreshMode>onStop</viewRefreshMode>
 				<viewRefreshTime>0</viewRefreshTime>
 			</Link>
@@ -134,7 +134,7 @@
 			<name>SOUND-6.51</name>
 			<visibility>0</visibility>
 			<Link>
-				<href>@www@/cgi-bin/satwrap?prod=sound-6_51</href>
+				<href>@www@/cgi-bin/satwrap?prod=sound_6_51</href>
 				<viewRefreshMode>onStop</viewRefreshMode>
 				<viewRefreshTime>0</viewRefreshTime>
 			</Link>
@@ -143,7 +143,7 @@
 			<name>SOUND-7.02</name>
 			<visibility>0</visibility>
 			<Link>
-				<href>@www@/cgi-bin/satwrap?prod=sound-7_02</href>
+				<href>@www@/cgi-bin/satwrap?prod=sound_7_02</href>
 				<viewRefreshMode>onStop</viewRefreshMode>
 				<viewRefreshTime>0</viewRefreshTime>
 			</Link>
@@ -152,7 +152,7 @@
 			<name>SOUND-7.43</name>
 			<visibility>0</visibility>
 			<Link>
-				<href>@www@/cgi-bin/satwrap?prod=sound-7_43</href>
+				<href>@www@/cgi-bin/satwrap?prod=sound_7_43</href>
 				<viewRefreshMode>onStop</viewRefreshMode>
 				<viewRefreshTime>0</viewRefreshTime>
 			</Link>
@@ -161,7 +161,7 @@
 			<name>SOUND-11.03</name>
 			<visibility>0</visibility>
 			<Link>
-				<href>@www@/cgi-bin/satwrap?prod=sound-11_03</href>
+				<href>@www@/cgi-bin/satwrap?prod=sound_11_03</href>
 				<viewRefreshMode>onStop</viewRefreshMode>
 				<viewRefreshTime>0</viewRefreshTime>
 			</Link>
@@ -170,7 +170,7 @@
 			<name>SOUND-14.06</name>
 			<visibility>0</visibility>
 			<Link>
-				<href>@www@/cgi-bin/satwrap?prod=sound-14_06</href>
+				<href>@www@/cgi-bin/satwrap?prod=sound_14_06</href>
 				<viewRefreshMode>onStop</viewRefreshMode>
 				<viewRefreshTime>0</viewRefreshTime>
 			</Link>
@@ -179,7 +179,7 @@
 			<name>SOUND-VIS</name>
 			<visibility>0</visibility>
 			<Link>
-				<href>@www@/cgi-bin/satwrap?prod=sound-vis</href>
+				<href>@www@/cgi-bin/satwrap?prod=sound_vis</href>
 				<viewRefreshMode>onStop</viewRefreshMode>
 				<viewRefreshTime>0</viewRefreshTime>
 			</Link>
