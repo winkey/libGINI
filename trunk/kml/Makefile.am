@@ -9,7 +9,9 @@ wwwdir = ${wwwdisk}/kml
 www_DATA = \
 	satz.kml \
 	satz-latest.kml
-	
+
+CLEANFILES = $(www_DATA)
+
 EXTRA_DIST = \
 	satz.kml.in \
 	satz-latest.kml.in
