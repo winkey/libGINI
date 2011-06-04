@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://earth.google.com/kml/2.2">
-<Folder>
-	<name>Satellite Imagery</name>
-	<Style>
-		<ListStyle>
-			<listItemType>radioFolder</listItemType>
-			<bgColor>00ffffff</bgColor>
-		</ListStyle>
-	</Style>
+<Document>
+    <Folder>
+		<name>Satellite Imagery</name>
+		<Style>
+			<ListStyle>
+				<listItemType>radioFolder</listItemType>
+				<bgColor>00ffffff</bgColor>
+			</ListStyle>
+		</Style>
 		<Folder>
 			<name>off</name>
 		</Folder>
