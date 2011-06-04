@@ -129,12 +129,14 @@ cat > "$mapfile" <<EOF
       'wms_timedefault'  '${endtime}'
     END
 
-    CLASS
-      EXPRESSION ([pixel] < 80)
-      STYLE
-        COLOR 0 0 0
-      END
-    END
+    # this no longer works
+    #CLASS
+    #  EXPRESSION ([pixel] < 80)
+    #  STYLE
+    #    COLOR 0 0 0
+    #  END
+    #END
+    
     
     OFFSITE 0 0 0
     
