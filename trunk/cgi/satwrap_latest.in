@@ -1,0 +1,50 @@
+#!/bin/bash 
+
+#           satwrap.in
+#  Fri Jun  5 08:34:15 2009
+#  Copyright  2009  Brian Case
+#  <rush@winkey.org>
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
+
+www=@www@
+
+prod=$(echo "$QUERY_STRING" | sed -n 's/^.*prod=\([^&]*\).*$/\1/p')
+if [[ "$prod" == "" ]] ; then prod=ir ; fi
+
+cat <<EOF
+Content-type: application/vnd.google-earth.kml
+Content-Disposition: attachment; filename=$prod.kml
+Content-Title: $prod
+
+EOF
+
+##### kml header #####
+
+cat <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+  <NetworkLink>
+    <name>$prod</name>
+    <open>1</open>
+    <Link>
+      <href>${www}/cgi-bin/sat-latest?$(echo "$QUERY_STRING" | sed 's/&/&amp;/g')</href>
+      <viewRefreshMode>onStop</viewRefreshMode>
+      <viewRefreshTime>1</viewRefreshTime>
+    </Link>
+  </NetworkLink>
+</Document></kml>
+EOF

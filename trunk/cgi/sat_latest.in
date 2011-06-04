@@ -1,0 +1,35 @@
+#!/bin/bash 
+
+#           sat_latest
+#  Tue Jun  9 07:29:34 2009
+#  Copyright  2009  Brian Case
+#  <rush@winkey.org>
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
+
+wwwdisk="@wwwdisk@/sat"
+
+prod=$(echo "$QUERY_STRING" | sed -n 's/^.*Layers=\([^&]*\).*$/\1/p')
+prod=$(echo "$prod" | cut -d "_" -f 2)
+
+if [[ "$prod" == "" ]] ; then prod=ir ; fi
+
+export MS_MAPFILE=${wwwdisk}/sat.map
+#export QUERY_STRING="${QUERY_STRING}&time=$(date +%FT%H:$(printf "%02d" $((10#$(date +%M)/30*30)) ):00Z)"
+
+export QUERY_STRING="${QUERY_STRING}&time=$(date -d "$(psql -d sat -t -c "SELECT time FROM $prod ORDER BY ogc_fid DESC LIMIT 1;" | sed -e 's/^ //')"  "+%Y-%m-%dT%H:%M:00Z")"
+
+./mapserv
+exit 0
