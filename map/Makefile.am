@@ -7,6 +7,8 @@ mapdir = ${wwwdisk}/sat
 map_DATA = \
 	sat.map
 
+CLEANFILES = $(map_DATA)
+
 EXTRA_DIST = \
 	sat.map.in
 
